@@ -68,6 +68,36 @@
             color: var(--omicron-sombra);
         }
 
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            color: var(--omicron-base);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid var(--rose-gold-cuerpo);
+            border-radius: 3px;
+            font-size: 16px;
+            color: var(--omicron-sombra);
+            background-color: var(--destello);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--omicron-base);
+        }
+
         .progress-container {
             width: 100%;
             height: 6px;
@@ -149,6 +179,17 @@
             display: none;
         }
 
+        .result-display {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--omicron-base);
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px dashed var(--rose-gold-cuerpo);
+            background-color: var(--rose-gold-reflejo);
+            border-radius: 4px;
+        }
+
         .footer-note {
             margin-top: 50px;
             font-size: 11px;
@@ -177,8 +218,16 @@
         
         <div class="instructions-box">
             <p><strong>INSTRUCCIONES:</strong></p>
-            <p>A continuación, se le presentará una serie de 100 afirmaciones. Lea cuidadosamente cada una y responda de manera honesta seleccionando <strong>"SÍ"</strong> o <strong>"NO"</strong>, basándose en cómo se ha sentido predominantemente durante los últimos 7 días.</p>
-            <p>No hay respuestas correctas o incorrectas. Asegúrese de no omitir ninguna pregunta. Al finalizar, la información será enviada automáticamente y de forma segura para su análisis clínico.</p>
+            <p>A continuación, se le presentará una serie de 100 afirmaciones. Lea cuidadosamente cada una y responda seleccionando <strong>"SÍ"</strong> o <strong>"NO"</strong>, basándose en cómo se ha sentido predominantemente durante los últimos 7 días.</p>
+        </div>
+
+        <div class="form-group">
+            <label for="patient-name">Nombre Completo:</label>
+            <input type="text" id="patient-name" placeholder="Ej. Yannick Espejel">
+        </div>
+        <div class="form-group">
+            <label for="patient-age">Edad:</label>
+            <input type="number" id="patient-age" placeholder="Ej. 28">
         </div>
         
         <button class="btn-primary" onclick="startQuiz()">Comenzar Evaluación</button>
@@ -201,12 +250,9 @@
 
     <div id="results-section">
         <h1>Evaluación Completada</h1>
-        <div class="subtitle">Datos Procesados</div>
+        <div class="subtitle">Resumen de Registro</div>
         
-        <div class="instructions-box" style="text-align: center;">
-            <p>Sus respuestas han sido registradas exitosamente.</p>
-            <p>Para concluir el protocolo, haga clic en el botón de envío. Esta acción remitirá sus datos directamente al área clínica.</p>
-        </div>
+        <div id="patient-summary" class="result-display">Procesando...</div>
         
         <button class="btn-primary" id="btn-submit" onclick="submitData()">Enviar Resultados</button>
         <div id="status-message"></div>
@@ -219,140 +265,140 @@
 </div>
 
 <script>
-    // Blindaje contra bloqueo de scripts en previsualizadores de celular
     try {
         emailjs.init("z7UKWFlgvcMOGPNBO");
     } catch (error) {
-        console.warn("No se pudo iniciar EmailJS. Probablemente bloqueado por el entorno de previsualización.");
+        console.warn("No se pudo iniciar EmailJS.");
     }
 
     const questions = [
-        "Mantengo la calma ante ruidos imprevistos en mi entorno.",
+        "Mantengo la calma ante ruidos imprevistos.",
         "Mi capacidad para iniciar el sueño ha mejorado.",
-        "Puedo estructurar mis ideas sin saltar de un tema a otro.",
-        "Siento que mis movimientos corporales son fluidos y precisos.",
-        "Experimento una tensión constante en la mandíbula.", 
-        "Logro terminar mis tareas pendientes sin sentir desesperación.",
-        "Mi respiración es profunda y regular durante el día.",
-        "Siento que mi mente procesa la información con claridad.",
-        "He notado una disminución en la rumiación de pensamientos.",
-        "La interacción social ya no me genera agotamiento inmediato.",
-        "Siento impulsos de mover las piernas al estar en reposo.", 
-        "Mi estado de ánimo es constante durante la jornada.",
-        "Puedo mantener el enfoque en una lectura por más de 30 minutos.",
-        "La sensación de bienestar físico es persistente.",
-        "Mis niveles de irritabilidad son mínimos ante el tráfico o esperas.",
-        "Siento que tengo el control sobre mis reacciones emocionales.",
-        "Me despierto con una sensación de angustia sin motivo aparente.", 
-        "El descanso nocturno me permite despertar con energía.",
-        "Mi apetito se mantiene estable y sin atracones por ansiedad.",
-        "Puedo resolver problemas logísticos sin entrar en pánico.",
-        "Siento que mi cuerpo se relaja con facilidad al llegar a casa.",
-        "Mi memoria operativa funciona correctamente.",
-        "Me sobresalto excesivamente cuando alguien me toca el hombro.", 
-        "Las palpitaciones por estrés han desaparecido.",
-        "Siento que el tiempo transcurre a un ritmo normal, no acelerado.",
-        "Puedo escuchar opiniones contrarias sin reaccionar defensivamente.",
-        "Mi postura corporal es relajada, sin rigidez en los hombros.",
-        "La pesadez mental por las tardes ha disminuido.",
-        "Siento una necesidad urgente de hablar constantemente.", 
-        "Mi visión se siente clara y sin fatiga ocular excesiva.",
-        "Puedo disfrutar de actividades silenciosas sin aburrimiento.",
-        "La coordinación ojo-mano es precisa.",
-        "Siento que mi sistema digestivo funciona con regularidad.",
-        "Mis manos permanecen secas y a temperatura estable.",
-        "Me cuesta mucho trabajo quedarme quieto en una silla.", 
-        "He recuperado la paciencia en mis labores cotidianas.",
-        "Siento que las demandas externas son manejables.",
-        "Mi capacidad de análisis crítico se mantiene intacta.",
-        "La tolerancia a los cambios de planes ha aumentado.",
-        "Puedo delegar tareas sin sentir desconfianza o ansiedad.",
-        "Mis pensamientos se agolpan unos con otros al intentar hablar.", 
-        "Siento que mi energía se distribuye de forma equitativa.",
-        "Mi capacidad para perdonar errores propios ha mejorado.",
-        "Siento una conexión armoniosa entre mi mente y mi cuerpo.",
-        "Las cefaleas por tensión han cesado.",
-        "Puedo esperar mi turno en una fila con tranquilidad.",
-        "Siento que el mundo va muy lento para mi ritmo actual.", 
-        "Mi interés por nuevos proyectos es genuino y no impulsivo.",
-        "Siento que mi juicio no está nublado por el miedo.",
-        "La calidad de mis conversaciones ha mejorado.",
-        "Puedo ignorar estímulos visuales distractores.",
-        "Mi respuesta al dolor físico es menos reactiva.",
-        "Siento una opresión en la garganta al enfrentar retos.", 
-        "La sensación de 'vacío en el estómago' ha desaparecido.",
-        "Soy capaz de planificar a largo plazo con optimismo.",
-        "Mi escritura es clara y mi pulso firme.",
-        "Siento que mi entorno es un lugar seguro.",
-        "Mi necesidad de estimulantes (café, azúcar) ha bajado.",
-        "Experimento sudoración fría cuando me corrigen.", 
-        "Puedo reconocer mis emociones sin que me desborden.",
-        "Mi voz mantiene un tono firme y pausado.",
-        "Siento que mi organismo ha asimilado el estímulo recibido.",
-        "La hipersensibilidad a los olores ha disminuido.",
-        "Puedo realizar tareas minuciosas con paciencia.",
-        "Siento que debo estar alerta todo el tiempo.", 
-        "Mi capacidad de asertividad es mayor hoy.",
-        "Siento que mis ciclos biológicos están sincronizados.",
-        "La sensación de mareo por estrés ha desaparecido.",
-        "Puedo leer señales no verbales con mayor claridad.",
-        "Mi toma de decisiones es racional y no por temor.",
-        "Me cuesta trabajo profundizar la respiración.", 
-        "Siento que mi descanso es de alta calidad.",
-        "Mi piel luce más saludable y menos reactiva.",
-        "Puedo estar en lugares concurridos sin agobio.",
-        "La tensión lumbar ha disminuido significativamente.",
-        "Siento que mi creatividad fluye sin bloqueos.",
-        "Siento picazón o inquietud en la piel sin causa médica.", 
-        "Puedo mantener la mirada tranquila al hablar.",
-        "Mi capacidad de síntesis ha mejorado.",
-        "Siento un equilibrio gabaérgico notable hoy.",
-        "La fatiga al despertar es inexistente.",
-        "Puedo organizar mis prioridades con lógica.",
-        "Tengo la sensación de haber olvidado algo importante siempre.", 
-        "Siento gratitud genuina por mi proceso.",
-        "Mi respuesta ante la crítica es analítica.",
-        "Puedo permanecer en una habitación a oscuras con calma.",
-        "Mi coordinación motriz es eficiente.",
-        "Siento que los ruidos fuertes no me desequilibran.",
-        "Siento que mis extremidades pesan demasiado.", 
-        "Mi sentido del humor es más ligero.",
-        "Puedo comer sin distracciones digitales.",
-        "Siento que mi sistema inmunológico está más fuerte.",
-        "Mi capacidad para decir 'no' sin culpa ha crecido.",
-        "La urgencia por el futuro ha bajado.",
-        "Me muerdo las uñas o los labios con frecuencia.", 
-        "Siento que mi intelecto está en su punto óptimo.",
-        "Puedo estar en silencio por periodos largos.",
-        "Mi postura al caminar es erguida y segura.",
-        "Siento que el tratamiento ha sido efectivo.",
-        "Me percibo en un estado de equilibrio integral."
+        "Puedo estructurar mis ideas sin saltar de tema.",
+        "Siento mis movimientos fluidos y precisos.",
+        "Experimento tension constante en la mandibula.",
+        "Logro terminar mis tareas sin desesperacion.",
+        "Mi respiracion es profunda y regular.",
+        "Siento que mi mente procesa con claridad.",
+        "Disminucion en la rumiacion de pensamientos.",
+        "La interaccion social ya no me agota.",
+        "Siento impulsos de mover las piernas en reposo.",
+        "Mi estado de animo es constante.",
+        "Mantengo el enfoque por mas de 30 minutos.",
+        "La sensacion de bienestar es persistente.",
+        "Baja irritabilidad ante esperas.",
+        "Control sobre mis reacciones emocionales.",
+        "Me despierto con angustia sin motivo.",
+        "Descanso nocturno reparador.",
+        "Apetito estable sin atracones.",
+        "Resuelvo problemas sin entrar en panico.",
+        "Mi cuerpo se relaja con facilidad.",
+        "Memoria operativa funcional.",
+        "Sobresalto excesivo ante el contacto fisico.",
+        "Palpitaciones por estres desaparecidas.",
+        "Siento que el tiempo transcurre normal.",
+        "Escucho criticas sin defensividad.",
+        "Postura corporal relajada.",
+        "Baja pesadez mental vespertina.",
+        "Necesidad urgente de hablar constante.",
+        "Vision clara sin fatiga ocular.",
+        "Disfruto actividades silenciosas.",
+        "Coordinacion ojo-mano precisa.",
+        "Sistema digestivo regular.",
+        "Manos secas bajo presion.",
+        "Me cuesta mucho trabajo quedarme quieto en una silla.",
+        "Paciencia en labores cotidianas.",
+        "Demandas externas manejables.",
+        "Capacidad de analisis critico intacta.",
+        "Tolerancia a cambios de planes.",
+        "Puedo delegar sin ansiedad.",
+        "Pensamientos agolpados al hablar.",
+        "Energia equitativa durante el dia.",
+        "Capacidad para perdonar errores propios.",
+        "Conexion armoniosa mente-cuerpo.",
+        "Cefaleas por tension cesadas.",
+        "Espero turnos con tranquilidad.",
+        "Siento que el mundo va muy lento.",
+        "Interes genuino por proyectos nuevos.",
+        "Juicio no nublado por miedo.",
+        "Calidad de conversacion profunda.",
+        "Ignoro estimulos visuales distractores.",
+        "Respuesta al dolor menos reactiva.",
+        "Opresion en garganta ante retos.",
+        "Desaparicion de vacio en estomago.",
+        "Planifico a largo plazo con optimismo.",
+        "Escritura clara y pulso firme.",
+        "Entorno percibido como seguro.",
+        "Baja necesidad de estimulantes.",
+        "Sudoracion fria ante correcciones.",
+        "Reconozco emociones sin desborde.",
+        "Voz firme y pausada.",
+        "Organismo asimilo el estimulo.",
+        "Baja hipersensibilidad a olores.",
+        "Tareas minuciosas con paciencia.",
+        "Siento que debo estar alerta siempre.",
+        "Capacidad de asertividad mayor.",
+        "Ciclos biologicos sincronizados.",
+        "Mareo por estres desaparecido.",
+        "Leo señales no verbales con claridad.",
+        "Decisiones racionales, no por temor.",
+        "Me cuesta trabajo profundizar la respiracion.",
+        "Descanso de alta calidad.",
+        "Piel saludable y menos reactiva.",
+        "Sin agobio en lugares concurridos.",
+        "Tension lumbar disminuida.",
+        "Creatividad sin bloqueos.",
+        "Picazon en piel sin causa medica.",
+        "Mantengo mirada tranquila al hablar.",
+        "Capacidad de sintesis mejorada.",
+        "Equilibrio gabaergico notable.",
+        "Fatiga al despertar inexistente.",
+        "Organizo prioridades con logica.",
+        "Sensacion de olvido constante.",
+        "Gratitud por mi proceso.",
+        "Respuesta ante critica analitica.",
+        "Calma en habitacion a oscuras.",
+        "Coordinacion motriz eficiente.",
+        "Ruidos fuertes no me desequilibran.",
+        "Siento que mis extremidades pesan demasiado.",
+        "Sentido del humor ligero.",
+        "Comida sin distracciones digitales.",
+        "Sistema inmunologico fuerte.",
+        "Capacidad para decir no sin culpa.",
+        "Baja urgencia por el futuro.",
+        "Me muerdo las uñas o los labios con frecuencia.",
+        "Intelecto en punto optimo.",
+        "Silencio por periodos largos.",
+        "Postura al caminar erguida.",
+        "Tratamiento efectivo.",
+        "Estado de equilibrio integral."
     ];
 
     const inverseIndices = [5, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65, 71, 77, 83, 89, 95];
     let currentIndex = 0;
     let score = 0;
-
-    const introSection = document.getElementById('intro-section');
-    const quizSection = document.getElementById('quiz-section');
-    const resultsSection = document.getElementById('results-section');
-    const qBox = document.getElementById('question-text');
-    const counter = document.getElementById('question-counter');
-    const progBar = document.getElementById('progress-bar');
-    const statusMessage = document.getElementById('status-message');
-    const btnSubmit = document.getElementById('btn-submit');
+    let patientName = "";
+    let patientAge = "";
 
     function startQuiz() {
-        introSection.style.display = 'none';
-        quizSection.style.display = 'block';
+        patientName = document.getElementById('patient-name').value.trim();
+        patientAge = document.getElementById('patient-age').value.trim();
+
+        if (!patientName || !patientAge) {
+            alert("Por favor, ingrese su nombre y edad para comenzar.");
+            return;
+        }
+
+        document.getElementById('intro-section').style.display = 'none';
+        document.getElementById('quiz-section').style.display = 'block';
         updateUI();
     }
 
     function updateUI() {
         if (currentIndex < questions.length) {
-            qBox.innerText = questions[currentIndex];
-            counter.innerText = `Pregunta ${currentIndex + 1} de 100`;
-            progBar.style.width = `${((currentIndex) / 100) * 100}%`;
+            document.getElementById('question-text').innerText = questions[currentIndex];
+            document.getElementById('question-counter').innerText = `Pregunta ${currentIndex + 1} de 100`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex) / 100) * 100}%`;
         } else {
             finishQuiz();
         }
@@ -370,13 +416,14 @@
     }
 
     function finishQuiz() {
-        quizSection.style.display = 'none';
-        resultsSection.style.display = 'block';
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('results-section').style.display = 'block';
+        document.getElementById('patient-summary').innerText = `${patientName}, ${patientAge} años, resultado score ${score}`;
     }
 
     function getInterpretation() {
         if (score >= 70) {
-            return "NIVEL I: EQUILIBRIO GABAÉRGICO CONSOLIDADO. Sistema nervioso con autorregulación inhibitoria óptima. Se sugiere un bloque más de 28 días a consideración.";
+            return "NIVEL I: EQUILIBRIO GABAÉRGICO CONSOLIDADO. Sistema nervioso con autorregulación inhibitoria óptma. Se sugiere un bloque más de 28 días a consideración.";
         } else if (score >= 40) {
             return "NIVEL II: ESTADO DE TRANSICIÓN. Avances significativos, pero con focos residuales de hiperexcitabilidad. Se sugiere un bloque más de 28 días a consideración.";
         } else {
@@ -385,6 +432,9 @@
     }
 
     function submitData() {
+        const btnSubmit = document.getElementById('btn-submit');
+        const statusMessage = document.getElementById('status-message');
+        
         btnSubmit.disabled = true;
         btnSubmit.innerText = "Enviando...";
         statusMessage.innerText = "";
@@ -392,6 +442,8 @@
         const interpretation = getInterpretation();
 
         const templateParams = {
+            patient_name: patientName,
+            patient_age: patientAge,
             score: score,
             interpretation: interpretation,
             to_email: "yanick608@gmail.com"
@@ -401,7 +453,7 @@
              btnSubmit.disabled = false;
              btnSubmit.innerText = "Reintentar Envío";
              statusMessage.style.color = "#A67C6D";
-             statusMessage.innerText = "La biblioteca de correos no cargó. Asegúrate de estar conectado a internet o probar en Chrome.";
+             statusMessage.innerText = "La biblioteca de correos no cargó. Revisa tu conexión.";
              return;
         }
 
