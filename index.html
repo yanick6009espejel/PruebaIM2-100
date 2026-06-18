@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocolo IM2-100 - Consultorio Omicron</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        :root {
+            --omicron-base: #063D3B;
+            --omicron-sombra: #042928;
+            --rose-gold-cuerpo: #C59D83;
+            --rose-gold-sombra: #A67C6D;
+            --rose-gold-reflejo: #F4DCD3;
+            --destello: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--destello);
+            color: var(--omicron-base);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--destello);
+            padding: 50px;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(4, 41, 40, 0.08);
+            border-top: 6px solid var(--omicron-base);
+            border-bottom: 2px solid var(--rose-gold-cuerpo);
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            color: var(--omicron-base);
+            font-size: 26px;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: var(--rose-gold-sombra);
+            margin: 0 0 30px 0;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .instructions-box {
+            background-color: var(--rose-gold-reflejo);
+            padding: 25px;
+            border-radius: 4px;
+            text-align: justify;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            color: var(--omicron-sombra);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: var(--rose-gold-reflejo);
+            border-radius: 3px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        #progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--omicron-base);
+            transition: width 0.3s ease;
+        }
+
+        #question-counter {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--rose-gold-sombra);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        #question-text {
+            font-size: 22px;
+            line-height: 1.5;
+            min-height: 120px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--omicron-base);
+            font-weight: 500;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 16px 50px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+            transition: all 0.2s;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background-color: var(--omicron-base);
+            color: var(--destello);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--omicron-sombra);
+        }
+
+        .btn-secondary {
+            background-color: var(--rose-gold-cuerpo);
+            color: var(--destello);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--rose-gold-sombra);
+        }
+
+        .btn-primary:disabled {
+            background-color: var(--rose-gold-sombra);
+            cursor: not-allowed;
+        }
+
+        #quiz-section, #results-section {
+            display: none;
+        }
+
+        .footer-note {
+            margin-top: 50px;
+            font-size: 11px;
+            color: var(--rose-gold-sombra);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-top: 1px solid var(--rose-gold-reflejo);
+            padding-top: 20px;
+        }
+
+        #status-message {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: var(--omicron-base);
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    
+    <div id="intro-section">
+        <h1>Protocolo IM2-100</h1>
+        <div class="subtitle">Evaluación de Equilibrio Gabaérgico</div>
+        
+        <div class="instructions-box">
+            <p><strong>INSTRUCCIONES:</strong></p>
+            <p>A continuación, se le presentará una serie de 100 afirmaciones. Lea cuidadosamente cada una y responda de manera honesta seleccionando <strong>"SÍ"</strong> o <strong>"NO"</strong>, basándose en cómo se ha sentido predominantemente durante los últimos 7 días.</p>
+            <p>No hay respuestas correctas o incorrectas. Asegúrese de no omitir ninguna pregunta. Al finalizar, la información será enviada automáticamente y de forma segura para su análisis clínico.</p>
+        </div>
+        
+        <button class="btn-primary" onclick="startQuiz()">Comenzar Evaluación</button>
+    </div>
+
+    <div id="quiz-section">
+        <h1>Protocolo IM2-100</h1>
+        <div class="progress-container">
+            <div id="progress-bar"></div>
+        </div>
+        
+        <div id="question-counter">Pregunta 1 de 100</div>
+        <div id="question-text">Cargando...</div>
+        
+        <div class="button-group">
+            <button class="btn-primary" onclick="handleAnswer(true)">Sí</button>
+            <button class="btn-secondary" onclick="handleAnswer(false)">No</button>
+        </div>
+    </div>
+
+    <div id="results-section">
+        <h1>Evaluación Completada</h1>
+        <div class="subtitle">Datos Procesados</div>
+        
+        <div class="instructions-box" style="text-align: center;">
+            <p>Sus respuestas han sido registradas exitosamente.</p>
+            <p>Para concluir el protocolo, haga clic en el botón de envío. Esta acción remitirá sus datos directamente al área clínica.</p>
+        </div>
+        
+        <button class="btn-primary" id="btn-submit" onclick="submitData()">Enviar Resultados</button>
+        <div id="status-message"></div>
+    </div>
+
+    <div class="footer-note">
+        Herramienta interna de Ómicron creada por el psicólogo Yanick Espejel.
+    </div>
+
+</div>
+
+<script>
+    // Blindaje contra bloqueo de scripts en previsualizadores de celular
+    try {
+        emailjs.init("z7UKWFlgvcMOGPNBO");
+    } catch (error) {
+        console.warn("No se pudo iniciar EmailJS. Probablemente bloqueado por el entorno de previsualización.");
+    }
+
+    const questions = [
+        "Mantengo la calma ante ruidos imprevistos en mi entorno.",
+        "Mi capacidad para iniciar el sueño ha mejorado.",
+        "Puedo estructurar mis ideas sin saltar de un tema a otro.",
+        "Siento que mis movimientos corporales son fluidos y precisos.",
+        "Experimento una tensión constante en la mandíbula.", 
+        "Logro terminar mis tareas pendientes sin sentir desesperación.",
+        "Mi respiración es profunda y regular durante el día.",
+        "Siento que mi mente procesa la información con claridad.",
+        "He notado una disminución en la rumiación de pensamientos.",
+        "La interacción social ya no me genera agotamiento inmediato.",
+        "Siento impulsos de mover las piernas al estar en reposo.", 
+        "Mi estado de ánimo es constante durante la jornada.",
+        "Puedo mantener el enfoque en una lectura por más de 30 minutos.",
+        "La sensación de bienestar físico es persistente.",
+        "Mis niveles de irritabilidad son mínimos ante el tráfico o esperas.",
+        "Siento que tengo el control sobre mis reacciones emocionales.",
+        "Me despierto con una sensación de angustia sin motivo aparente.", 
+        "El descanso nocturno me permite despertar con energía.",
+        "Mi apetito se mantiene estable y sin atracones por ansiedad.",
+        "Puedo resolver problemas logísticos sin entrar en pánico.",
+        "Siento que mi cuerpo se relaja con facilidad al llegar a casa.",
+        "Mi memoria operativa funciona correctamente.",
+        "Me sobresalto excesivamente cuando alguien me toca el hombro.", 
+        "Las palpitaciones por estrés han desaparecido.",
+        "Siento que el tiempo transcurre a un ritmo normal, no acelerado.",
+        "Puedo escuchar opiniones contrarias sin reaccionar defensivamente.",
+        "Mi postura corporal es relajada, sin rigidez en los hombros.",
+        "La pesadez mental por las tardes ha disminuido.",
+        "Siento una necesidad urgente de hablar constantemente.", 
+        "Mi visión se siente clara y sin fatiga ocular excesiva.",
+        "Puedo disfrutar de actividades silenciosas sin aburrimiento.",
+        "La coordinación ojo-mano es precisa.",
+        "Siento que mi sistema digestivo funciona con regularidad.",
+        "Mis manos permanecen secas y a temperatura estable.",
+        "Me cuesta mucho trabajo quedarme quieto en una silla.", 
+        "He recuperado la paciencia en mis labores cotidianas.",
+        "Siento que las demandas externas son manejables.",
+        "Mi capacidad de análisis crítico se mantiene intacta.",
+        "La tolerancia a los cambios de planes ha aumentado.",
+        "Puedo delegar tareas sin sentir desconfianza o ansiedad.",
+        "Mis pensamientos se agolpan unos con otros al intentar hablar.", 
+        "Siento que mi energía se distribuye de forma equitativa.",
+        "Mi capacidad para perdonar errores propios ha mejorado.",
+        "Siento una conexión armoniosa entre mi mente y mi cuerpo.",
+        "Las cefaleas por tensión han cesado.",
+        "Puedo esperar mi turno en una fila con tranquilidad.",
+        "Siento que el mundo va muy lento para mi ritmo actual.", 
+        "Mi interés por nuevos proyectos es genuino y no impulsivo.",
+        "Siento que mi juicio no está nublado por el miedo.",
+        "La calidad de mis conversaciones ha mejorado.",
+        "Puedo ignorar estímulos visuales distractores.",
+        "Mi respuesta al dolor físico es menos reactiva.",
+        "Siento una opresión en la garganta al enfrentar retos.", 
+        "La sensación de 'vacío en el estómago' ha desaparecido.",
+        "Soy capaz de planificar a largo plazo con optimismo.",
+        "Mi escritura es clara y mi pulso firme.",
+        "Siento que mi entorno es un lugar seguro.",
+        "Mi necesidad de estimulantes (café, azúcar) ha bajado.",
+        "Experimento sudoración fría cuando me corrigen.", 
+        "Puedo reconocer mis emociones sin que me desborden.",
+        "Mi voz mantiene un tono firme y pausado.",
+        "Siento que mi organismo ha asimilado el estímulo recibido.",
+        "La hipersensibilidad a los olores ha disminuido.",
+        "Puedo realizar tareas minuciosas con paciencia.",
+        "Siento que debo estar alerta todo el tiempo.", 
+        "Mi capacidad de asertividad es mayor hoy.",
+        "Siento que mis ciclos biológicos están sincronizados.",
+        "La sensación de mareo por estrés ha desaparecido.",
+        "Puedo leer señales no verbales con mayor claridad.",
+        "Mi toma de decisiones es racional y no por temor.",
+        "Me cuesta trabajo profundizar la respiración.", 
+        "Siento que mi descanso es de alta calidad.",
+        "Mi piel luce más saludable y menos reactiva.",
+        "Puedo estar en lugares concurridos sin agobio.",
+        "La tensión lumbar ha disminuido significativamente.",
+        "Siento que mi creatividad fluye sin bloqueos.",
+        "Siento picazón o inquietud en la piel sin causa médica.", 
+        "Puedo mantener la mirada tranquila al hablar.",
+        "Mi capacidad de síntesis ha mejorado.",
+        "Siento un equilibrio gabaérgico notable hoy.",
+        "La fatiga al despertar es inexistente.",
+        "Puedo organizar mis prioridades con lógica.",
+        "Tengo la sensación de haber olvidado algo importante siempre.", 
+        "Siento gratitud genuina por mi proceso.",
+        "Mi respuesta ante la crítica es analítica.",
+        "Puedo permanecer en una habitación a oscuras con calma.",
+        "Mi coordinación motriz es eficiente.",
+        "Siento que los ruidos fuertes no me desequilibran.",
+        "Siento que mis extremidades pesan demasiado.", 
+        "Mi sentido del humor es más ligero.",
+        "Puedo comer sin distracciones digitales.",
+        "Siento que mi sistema inmunológico está más fuerte.",
+        "Mi capacidad para decir 'no' sin culpa ha crecido.",
+        "La urgencia por el futuro ha bajado.",
+        "Me muerdo las uñas o los labios con frecuencia.", 
+        "Siento que mi intelecto está en su punto óptimo.",
+        "Puedo estar en silencio por periodos largos.",
+        "Mi postura al caminar es erguida y segura.",
+        "Siento que el tratamiento ha sido efectivo.",
+        "Me percibo en un estado de equilibrio integral."
+    ];
+
+    const inverseIndices = [5, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65, 71, 77, 83, 89, 95];
+    let currentIndex = 0;
+    let score = 0;
+
+    const introSection = document.getElementById('intro-section');
+    const quizSection = document.getElementById('quiz-section');
+    const resultsSection = document.getElementById('results-section');
+    const qBox = document.getElementById('question-text');
+    const counter = document.getElementById('question-counter');
+    const progBar = document.getElementById('progress-bar');
+    const statusMessage = document.getElementById('status-message');
+    const btnSubmit = document.getElementById('btn-submit');
+
+    function startQuiz() {
+        introSection.style.display = 'none';
+        quizSection.style.display = 'block';
+        updateUI();
+    }
+
+    function updateUI() {
+        if (currentIndex < questions.length) {
+            qBox.innerText = questions[currentIndex];
+            counter.innerText = `Pregunta ${currentIndex + 1} de 100`;
+            progBar.style.width = `${((currentIndex) / 100) * 100}%`;
+        } else {
+            finishQuiz();
+        }
+    }
+
+    function handleAnswer(answer) {
+        const isInverse = inverseIndices.includes(currentIndex + 1);
+        
+        if (answer === true) {
+            score += isInverse ? -1 : 1;
+        }
+        
+        currentIndex++;
+        updateUI();
+    }
+
+    function finishQuiz() {
+        quizSection.style.display = 'none';
+        resultsSection.style.display = 'block';
+    }
+
+    function getInterpretation() {
+        if (score >= 70) {
+            return "NIVEL I: EQUILIBRIO GABAÉRGICO CONSOLIDADO. Sistema nervioso con autorregulación inhibitoria óptima. Se sugiere un bloque más de 28 días a consideración.";
+        } else if (score >= 40) {
+            return "NIVEL II: ESTADO DE TRANSICIÓN. Avances significativos, pero con focos residuales de hiperexcitabilidad. Se sugiere un bloque más de 28 días a consideración.";
+        } else {
+            return "NIVEL III: DESEQUILIBRIO PERSISTENTE. El sistema no logra compensar estímulos excitatorios. Requiere atención continua. Se sugiere un bloque más de 28 días a consideración.";
+        }
+    }
+
+    function submitData() {
+        btnSubmit.disabled = true;
+        btnSubmit.innerText = "Enviando...";
+        statusMessage.innerText = "";
+
+        const interpretation = getInterpretation();
+
+        const templateParams = {
+            score: score,
+            interpretation: interpretation,
+            to_email: "yanick608@gmail.com"
+        };
+
+        if (typeof emailjs === 'undefined') {
+             btnSubmit.disabled = false;
+             btnSubmit.innerText = "Reintentar Envío";
+             statusMessage.style.color = "#A67C6D";
+             statusMessage.innerText = "La biblioteca de correos no cargó. Asegúrate de estar conectado a internet o probar en Chrome.";
+             return;
+        }
+
+        emailjs.send('service_avzt25n', 'template_d54jvr8', templateParams)
+            .then(function(response) {
+                btnSubmit.style.display = 'none';
+                statusMessage.style.color = "var(--omicron-base)";
+                statusMessage.innerText = "Datos enviados correctamente. Puede cerrar esta ventana.";
+            }, function(error) {
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = "Reintentar Envío";
+                statusMessage.style.color = "#A67C6D";
+                statusMessage.innerText = "Error en la conexión. Por favor, intente de nuevo.";
+            });
+    }
+</script>
+
+</body>
+</html>
