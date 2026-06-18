@@ -423,11 +423,11 @@
 
     function getInterpretation() {
         if (score >= 70) {
-            return "NIVEL I: EQUILIBRIO GABAÉRGICO CONSOLIDADO. Sistema nervioso con autorregulación inhibitoria óptma. Se sugiere un bloque más de 28 días a consideración.";
+            return "NIVEL I: EQUILIBRIO GABAÉRGICO CONSOLIDADO.";
         } else if (score >= 40) {
-            return "NIVEL II: ESTADO DE TRANSICIÓN. Avances significativos, pero con focos residuales de hiperexcitabilidad. Se sugiere un bloque más de 28 días a consideración.";
+            return "NIVEL II: ESTADO DE TRANSICIÓN.";
         } else {
-            return "NIVEL III: DESEQUILIBRIO PERSISTENTE. El sistema no logra compensar estímulos excitatorios. Requiere atención continua. Se sugiere un bloque más de 28 días a consideración.";
+            return "NIVEL III: DESEQUILIBRIO PERSISTENTE.";
         }
     }
 
@@ -441,6 +441,7 @@
 
         const interpretation = getInterpretation();
 
+        // Variables mapeadas de forma idéntica a tu plantilla de EmailJS
         const templateParams = {
             patient_name: patientName,
             patient_age: patientAge,
@@ -457,7 +458,8 @@
              return;
         }
 
-        emailjs.send('service_avzt25n', 'template_d54jvr8', templateParams)
+        // Llamada corregida con tu ID de plantilla actual: template_43iqh7l
+        emailjs.send('service_avzt25n', 'template_43iqh7l', templateParams)
             .then(function(response) {
                 btnSubmit.style.display = 'none';
                 statusMessage.style.color = "var(--omicron-base)";
